@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using UnityEngine;
@@ -57,8 +58,10 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConVar.Server.daylength = _config.DayDurationMinutes;
-            ConVar.Server.nightlength = _config.NightDurationMinutes;
+            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.daylength",
+                _config.DayDurationMinutes.ToString(CultureInfo.InvariantCulture));
+            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.nightlength",
+                _config.NightDurationMinutes.ToString(CultureInfo.InvariantCulture));
             sky.Cycle.RefreshSky();
         }
 
