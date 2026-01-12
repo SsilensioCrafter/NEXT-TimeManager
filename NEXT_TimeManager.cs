@@ -62,7 +62,6 @@ namespace Oxide.Plugins
                 _config.DayDurationMinutes.ToString(CultureInfo.InvariantCulture));
             ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.nightlength",
                 _config.NightDurationMinutes.ToString(CultureInfo.InvariantCulture));
-            sky.Cycle.RefreshSky();
         }
 
         [ChatCommand("timeset")]
