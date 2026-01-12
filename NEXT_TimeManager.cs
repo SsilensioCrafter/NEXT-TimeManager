@@ -57,8 +57,8 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConVar.Env.daylength = _config.DayDurationMinutes;
-            ConVar.Env.nightlength = _config.NightDurationMinutes;
+            ConVar.Server.daylength = _config.DayDurationMinutes;
+            ConVar.Server.nightlength = _config.NightDurationMinutes;
             sky.Cycle.RefreshSky();
         }
 
