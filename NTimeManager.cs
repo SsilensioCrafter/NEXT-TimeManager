@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("NEXT_TimeManager", "NEXT Rust", "1.0.0")]
+    [Info("NTimeManager", "NEXT Rust", "1.0.0")]
     [Description("Time manager with day/night durations and time commands.")]
     public class NTimeManager : RustPlugin
     {
