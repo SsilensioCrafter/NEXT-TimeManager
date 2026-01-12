@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Oxide.Plugins
 {
-    [Info("NEXT_TimeManager", "OpenAI", "1.0.0")]
+    [Info("NEXT_TimeManager", "NEXT Rust", "1.0.0")]
     [Description("Time manager with day/night durations and time commands.")]
     public class NEXT_TimeManager : RustPlugin
     {
@@ -57,8 +57,9 @@ namespace Oxide.Plugins
                 return;
             }
 
-            sky.Cycle.DayLengthInMinutes = _config.DayDurationMinutes;
-            sky.Cycle.NightLengthInMinutes = _config.NightDurationMinutes;
+            ConVar.Env.daylength = _config.DayDurationMinutes;
+            ConVar.Env.nightlength = _config.NightDurationMinutes;
+            sky.Cycle.RefreshSky();
         }
 
         [ChatCommand("timeset")]
