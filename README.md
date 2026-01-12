@@ -1,2 +1,31 @@
-# NEXT-TimeManager
-NEXT Rust Time manager plugin
+# NTimeManager
+
+Плагин для управления временем на Rust сервере (Oxide/uMod).
+
+## Возможности
+- Настройка длительности дня и ночи через конфиг.
+- Команда для установки дня/ночи админами.
+- Команда для просмотра длительности дня/ночи админами.
+- Команда для игроков, чтобы узнать текущее время.
+
+## Команды
+- `/timeset day|night` — установить день или ночь (требует права `nexttimemanager.admin`).
+- `/timeduration` — показать длительность дня и ночи из конфига (требует права `nexttimemanager.admin`).
+- `/time` — показать текущее время в чате (требует права `nexttimemanager.time`).
+
+## Права
+- `nexttimemanager.admin` — доступ к админским командам.
+- `nexttimemanager.time` — доступ к команде `/time`.
+
+## Конфиг
+```json
+{
+  "DayDurationMinutes": 45.0,
+  "NightDurationMinutes": 15.0
+}
+```
+
+## Установка
+1. Поместите файл `NTimeManager.cs` в папку `oxide/plugins`.
+2. Перезапустите сервер или выполните `oxide.reload NTimeManager`.
+3. Настройте длительности дня/ночи в конфиге и перезагрузите плагин.
