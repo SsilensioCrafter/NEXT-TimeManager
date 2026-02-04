@@ -239,6 +239,11 @@ namespace Oxide.Plugins
 
         private static bool TrySetEnvLength(string command, float value)
         {
+            if (!HasConsoleCommand(command))
+            {
+                return false;
+            }
+
             try
             {
                 ConsoleSystem.Run(ConsoleSystem.Option.Server, command,
@@ -249,6 +254,31 @@ namespace Oxide.Plugins
             {
                 return false;
             }
+        }
+
+        private static bool HasConsoleCommand(string command)
+        {
+            var indexProperty = typeof(ConsoleSystem).GetProperty("Index");
+            if (indexProperty == null)
+            {
+                return false;
+            }
+
+            var index = indexProperty.GetValue(null);
+            if (index == null)
+            {
+                return false;
+            }
+
+            var indexType = index.GetType();
+            var findMethod = indexType.GetMethod("FindCommand", new[] { typeof(string) })
+                             ?? indexType.GetMethod("GetCommand", new[] { typeof(string) });
+            if (findMethod == null)
+            {
+                return false;
+            }
+
+            return findMethod.Invoke(index, new object[] { command }) != null;
         }
     }
 }
