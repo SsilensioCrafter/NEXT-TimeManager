@@ -10,8 +10,8 @@ namespace Oxide.Plugins
     [Description("Time manager with day/night durations and time commands.")]
     public class NTimeManager : RustPlugin
     {
-        private const string PermissionAdmin = "nexttimemanager.admin";
-        private const string PermissionTime = "nexttimemanager.time";
+        private const string PermissionAdmin = "ntimemanager.admin";
+        private const string PermissionTime = "ntimemanager.time";
 
         private PluginConfig _config;
 
