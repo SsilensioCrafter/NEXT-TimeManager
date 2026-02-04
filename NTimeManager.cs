@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using UnityEngine;
@@ -60,10 +59,8 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "daylength",
-                _config.DayDurationMinutes.ToString(CultureInfo.InvariantCulture));
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "nightlength",
-                _config.NightDurationMinutes.ToString(CultureInfo.InvariantCulture));
+            sky.Cycle.DayLengthInMinutes = _config.DayDurationMinutes;
+            sky.Cycle.NightLengthInMinutes = _config.NightDurationMinutes;
         }
 
         [ChatCommand("timeset")]
