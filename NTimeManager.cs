@@ -10,8 +10,8 @@ namespace Oxide.Plugins
     [Description("Time manager with day/night durations and time commands.")]
     public class NTimeManager : RustPlugin
     {
-        private const string PermissionAdmin = "nexttimemanager.admin";
-        private const string PermissionTime = "nexttimemanager.time";
+        private const string PermissionAdmin = "ntimemanager.admin";
+        private const string PermissionTime = "ntimemanager.time";
 
         private PluginConfig _config;
 
@@ -60,9 +60,9 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.daylength",
+            ConsoleSystem.Run(ConsoleSystem.Option.Server, "daylength",
                 _config.DayDurationMinutes.ToString(CultureInfo.InvariantCulture));
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.nightlength",
+            ConsoleSystem.Run(ConsoleSystem.Option.Server, "nightlength",
                 _config.NightDurationMinutes.ToString(CultureInfo.InvariantCulture));
         }
 
