@@ -1,5 +1,4 @@
 using System;
-using System.Globalization;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using UnityEngine;
@@ -60,10 +59,18 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.daylength",
-                _config.DayDurationMinutes.ToString(CultureInfo.InvariantCulture));
-            ConsoleSystem.Run(ConsoleSystem.Option.Server, "env.nightlength",
-                _config.NightDurationMinutes.ToString(CultureInfo.InvariantCulture));
+            var dayApplied = TrySetCycleValue(sky.Cycle,
+                new[] { "DayLengthInMinutes", "DayLength", "dayLengthInMinutes" },
+                _config.DayDurationMinutes);
+            var nightApplied = TrySetCycleValue(sky.Cycle,
+                new[] { "NightLengthInMinutes", "NightLength", "nightLengthInMinutes" },
+                _config.NightDurationMinutes);
+
+            if (!dayApplied || !nightApplied)
+            {
+                PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
+            }
+
         }
 
         [ChatCommand("timeset")]
@@ -169,6 +176,34 @@ namespace Oxide.Plugins
             {
                 SendReply(player, message);
             }
+        }
+
+        private static bool TrySetCycleValue(object cycle, string[] memberNames, float value)
+        {
+            if (cycle == null)
+            {
+                return false;
+            }
+
+            var cycleType = cycle.GetType();
+            foreach (var memberName in memberNames)
+            {
+                var property = cycleType.GetProperty(memberName);
+                if (property != null && property.CanWrite && property.PropertyType == typeof(float))
+                {
+                    property.SetValue(cycle, value);
+                    return true;
+                }
+
+                var field = cycleType.GetField(memberName);
+                if (field != null && field.FieldType == typeof(float))
+                {
+                    field.SetValue(cycle, value);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
