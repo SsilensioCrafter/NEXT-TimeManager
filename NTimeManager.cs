@@ -59,8 +59,9 @@ namespace Oxide.Plugins
                 return;
             }
 
-            sky.Cycle.DayLengthInMinutes = _config.DayDurationMinutes;
-            sky.Cycle.NightLengthInMinutes = _config.NightDurationMinutes;
+            ConVar.Env.daylength = _config.DayDurationMinutes;
+            ConVar.Env.nightlength = _config.NightDurationMinutes;
+            sky.Cycle.CalculateCelestialVariables();
         }
 
         [ChatCommand("timeset")]
