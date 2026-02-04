@@ -59,8 +59,18 @@ namespace Oxide.Plugins
                 return;
             }
 
-            ConVar.Server.daylength = _config.DayDurationMinutes;
-            ConVar.Server.nightlength = _config.NightDurationMinutes;
+            var dayApplied = TrySetCycleValue(sky.Cycle,
+                new[] { "DayLengthInMinutes", "DayLength", "dayLengthInMinutes" },
+                _config.DayDurationMinutes);
+            var nightApplied = TrySetCycleValue(sky.Cycle,
+                new[] { "NightLengthInMinutes", "NightLength", "nightLengthInMinutes" },
+                _config.NightDurationMinutes);
+
+            if (!dayApplied || !nightApplied)
+            {
+                PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
+            }
+
             sky.Cycle.CalculateCelestialVariables();
         }
 
@@ -167,6 +177,34 @@ namespace Oxide.Plugins
             {
                 SendReply(player, message);
             }
+        }
+
+        private static bool TrySetCycleValue(object cycle, string[] memberNames, float value)
+        {
+            if (cycle == null)
+            {
+                return false;
+            }
+
+            var cycleType = cycle.GetType();
+            foreach (var memberName in memberNames)
+            {
+                var property = cycleType.GetProperty(memberName);
+                if (property != null && property.CanWrite && property.PropertyType == typeof(float))
+                {
+                    property.SetValue(cycle, value);
+                    return true;
+                }
+
+                var field = cycleType.GetField(memberName);
+                if (field != null && field.FieldType == typeof(float))
+                {
+                    field.SetValue(cycle, value);
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }
