@@ -241,7 +241,8 @@ namespace Oxide.Plugins
         {
             try
             {
-                ConsoleSystem.Run.Server.Quiet(command, value.ToString(CultureInfo.InvariantCulture));
+                ConsoleSystem.Run(ConsoleSystem.Option.Server, command,
+                    value.ToString(CultureInfo.InvariantCulture));
                 return true;
             }
             catch (Exception)
