@@ -72,10 +72,13 @@ namespace Oxide.Plugins
                 TryRefreshCycle(sky.Cycle);
             }
 
-            var envDayApplied = TrySetEnvLength("env.daylength", _config.DayDurationMinutes);
-            var envNightApplied = TrySetEnvLength("env.nightlength", _config.NightDurationMinutes);
+            var envDayAvailable = HasConsoleCommand("env.daylength");
+            var envNightAvailable = HasConsoleCommand("env.nightlength");
+            var envDayApplied = envDayAvailable && TrySetEnvLength("env.daylength", _config.DayDurationMinutes);
+            var envNightApplied = envNightAvailable && TrySetEnvLength("env.nightlength", _config.NightDurationMinutes);
 
-            if ((!dayApplied || !nightApplied) && (!envDayApplied || !envNightApplied))
+            if ((!dayApplied || !nightApplied)
+                && ((envDayAvailable && !envDayApplied) || (envNightAvailable && !envNightApplied)))
             {
                 PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
             }
