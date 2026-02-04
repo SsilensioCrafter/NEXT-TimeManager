@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using UnityEngine;
@@ -66,7 +67,15 @@ namespace Oxide.Plugins
                 new[] { "NightLengthInMinutes", "NightLength", "nightLengthInMinutes" },
                 _config.NightDurationMinutes);
 
-            if (!dayApplied || !nightApplied)
+            if (dayApplied || nightApplied)
+            {
+                TryRefreshCycle(sky.Cycle);
+            }
+
+            var envDayApplied = TrySetEnvLength("env.daylength", _config.DayDurationMinutes);
+            var envNightApplied = TrySetEnvLength("env.nightlength", _config.NightDurationMinutes);
+
+            if ((!dayApplied || !nightApplied) && (!envDayApplied || !envNightApplied))
             {
                 PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
             }
@@ -204,6 +213,41 @@ namespace Oxide.Plugins
             }
 
             return false;
+        }
+
+        private static void TryRefreshCycle(object cycle)
+        {
+            if (cycle == null)
+            {
+                return;
+            }
+
+            var cycleType = cycle.GetType();
+            var refreshMethod = cycleType.GetMethod("Refresh");
+            if (refreshMethod != null)
+            {
+                refreshMethod.Invoke(cycle, null);
+                return;
+            }
+
+            var updateMethod = cycleType.GetMethod("Update");
+            if (updateMethod != null)
+            {
+                updateMethod.Invoke(cycle, null);
+            }
+        }
+
+        private static bool TrySetEnvLength(string command, float value)
+        {
+            try
+            {
+                ConsoleSystem.Run.Server.Quiet(command, value.ToString(CultureInfo.InvariantCulture));
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
