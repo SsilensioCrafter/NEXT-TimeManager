@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Oxide.Core;
 using Oxide.Core.Plugins;
 using UnityEngine;
@@ -66,7 +67,18 @@ namespace Oxide.Plugins
                 new[] { "NightLengthInMinutes", "NightLength", "nightLengthInMinutes" },
                 _config.NightDurationMinutes);
 
-            if (!dayApplied || !nightApplied)
+            if (dayApplied || nightApplied)
+            {
+                TryRefreshCycle(sky.Cycle);
+            }
+
+            var envDayAvailable = HasConsoleCommand("env.daylength");
+            var envNightAvailable = HasConsoleCommand("env.nightlength");
+            var envDayApplied = envDayAvailable && TrySetEnvLength("env.daylength", _config.DayDurationMinutes);
+            var envNightApplied = envNightAvailable && TrySetEnvLength("env.nightlength", _config.NightDurationMinutes);
+
+            if ((!dayApplied || !nightApplied)
+                && ((envDayAvailable && !envDayApplied) || (envNightAvailable && !envNightApplied)))
             {
                 PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
             }
@@ -204,6 +216,72 @@ namespace Oxide.Plugins
             }
 
             return false;
+        }
+
+        private static void TryRefreshCycle(object cycle)
+        {
+            if (cycle == null)
+            {
+                return;
+            }
+
+            var cycleType = cycle.GetType();
+            var refreshMethod = cycleType.GetMethod("Refresh");
+            if (refreshMethod != null)
+            {
+                refreshMethod.Invoke(cycle, null);
+                return;
+            }
+
+            var updateMethod = cycleType.GetMethod("Update");
+            if (updateMethod != null)
+            {
+                updateMethod.Invoke(cycle, null);
+            }
+        }
+
+        private static bool TrySetEnvLength(string command, float value)
+        {
+            if (!HasConsoleCommand(command))
+            {
+                return false;
+            }
+
+            try
+            {
+                ConsoleSystem.Run(ConsoleSystem.Option.Server, command,
+                    value.ToString(CultureInfo.InvariantCulture));
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static bool HasConsoleCommand(string command)
+        {
+            var indexProperty = typeof(ConsoleSystem).GetProperty("Index");
+            if (indexProperty == null)
+            {
+                return false;
+            }
+
+            var index = indexProperty.GetValue(null);
+            if (index == null)
+            {
+                return false;
+            }
+
+            var indexType = index.GetType();
+            var findMethod = indexType.GetMethod("FindCommand", new[] { typeof(string) })
+                             ?? indexType.GetMethod("GetCommand", new[] { typeof(string) });
+            if (findMethod == null)
+            {
+                return false;
+            }
+
+            return findMethod.Invoke(index, new object[] { command }) != null;
         }
     }
 }
