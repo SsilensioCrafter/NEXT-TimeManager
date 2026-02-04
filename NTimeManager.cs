@@ -71,7 +71,6 @@ namespace Oxide.Plugins
                 PrintWarning("Could not apply day/night lengths via TOD cycle parameters.");
             }
 
-            sky.Cycle.CalculateCelestialVariables();
         }
 
         [ChatCommand("timeset")]
